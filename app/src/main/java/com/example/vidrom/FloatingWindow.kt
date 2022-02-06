@@ -11,10 +11,15 @@ import android.graphics.Color
 import android.util.Log
 import android.view.*
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.PRIORITY_MIN
 import de.hdodenhof.circleimageview.CircleImageView
+import android.view.Gravity
+
+
+
 
 
 class FloatingWindow : Service() {
@@ -42,15 +47,13 @@ class FloatingWindow : Service() {
                 ""
             }
 
-        val notificationBuilder = NotificationCompat.Builder(this, channelId )
+        val notificationBuilder = NotificationCompat.Builder(this, channelId)
         val notification = notificationBuilder.setOngoing(true)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.mipmap.ip_camera)
             .setPriority(PRIORITY_MIN)
             .setCategory(Notification.CATEGORY_SERVICE)
             .build()
         startForeground(101, notification)
-
-
 
 
         val metrics = applicationContext.resources.displayMetrics
@@ -82,22 +85,26 @@ class FloatingWindow : Service() {
             PixelFormat.TRANSLUCENT
         )
 
-        floatWindowLayoutParams.gravity = Gravity.CENTER
+        floatWindowLayoutParams.gravity = Gravity.TOP or Gravity.LEFT
         floatWindowLayoutParams.x = 0
         floatWindowLayoutParams.y = 0
 
         windowManager.addView(floatView, floatWindowLayoutParams)
 
         button.setOnClickListener {
-            stopSelf()
             val mainIntent = Intent(Intent.ACTION_MAIN, null)
             mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
-            val pkgAppsList: List<ResolveInfo> =
-                baseContext.packageManager.queryIntentActivities(mainIntent, 0)
 
             val launchIntent = packageManager.getLaunchIntentForPackage("com.hichip.campro")
-            launchIntent?.let { startActivity(it) }
-
+            launchIntent?.let {
+                startActivity(it)
+                stopSelf()
+            }
+            if (launchIntent == null) {
+                Toast.makeText(
+                    applicationContext, "don't have com.hichip.campro package", Toast.LENGTH_SHORT
+                ).show()
+            }
         }
 
         dismissButton.setOnClickListener {
@@ -105,7 +112,7 @@ class FloatingWindow : Service() {
             windowManager.removeView(floatView)
         }
 
-        floatView.setOnTouchListener(object : View.OnTouchListener{
+        floatView.setOnTouchListener(object : View.OnTouchListener {
             val updateFloatWindowLayoutParams = floatWindowLayoutParams
             var x = 0.0
             var y = 0.0
@@ -116,7 +123,7 @@ class FloatingWindow : Service() {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 event?.let { motionEvent ->
                     Log.d("######", "motionEvent: ${motionEvent.action}")
-                    when (motionEvent.action){
+                    when (motionEvent.action) {
                         MotionEvent.ACTION_DOWN -> {
                             x = updateFloatWindowLayoutParams.x.toDouble()
                             y = updateFloatWindowLayoutParams.y.toDouble()
@@ -143,11 +150,12 @@ class FloatingWindow : Service() {
     }
 
 
-
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun createNotificationChannel(channelId: String, channelName: String): String{
-        val chan = NotificationChannel(channelId,
-            channelName, NotificationManager.IMPORTANCE_NONE)
+    private fun createNotificationChannel(channelId: String, channelName: String): String {
+        val chan = NotificationChannel(
+            channelId,
+            channelName, NotificationManager.IMPORTANCE_NONE
+        )
         chan.lightColor = Color.BLUE
         chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
         val service = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

@@ -10,9 +10,8 @@ import android.util.Log
 class PhoneStateReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
-        Log.d("PhoneStateReceiver: ", "state: $state")
         state?.let { state ->
-            if (state == TelephonyManager.EXTRA_STATE_RINGING) {
+            if (state == TelephonyManager.EXTRA_STATE_OFFHOOK) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     context.startForegroundService(Intent(context, FloatingWindow::class.java))
                 } else {

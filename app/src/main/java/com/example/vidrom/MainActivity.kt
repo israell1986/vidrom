@@ -56,12 +56,6 @@ class MainActivity : AppCompatActivity() {
 
         binding.button.setOnClickListener { view ->
             if (hasPermission) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    startForegroundService(Intent(this, FloatingWindow::class.java))
-                } else {
-                    startService(Intent(this, FloatingWindow::class.java))
-                }
-
                 finish()
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 checkForPermission()
