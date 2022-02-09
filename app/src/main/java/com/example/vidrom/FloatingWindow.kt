@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.IBinder
 import android.content.pm.ResolveInfo
 import android.graphics.Color
+import android.preference.PreferenceManager
 import android.util.Log
 import android.view.*
 import android.widget.ImageButton
@@ -95,14 +96,16 @@ class FloatingWindow : Service() {
             val mainIntent = Intent(Intent.ACTION_MAIN, null)
             mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
 
-            val launchIntent = packageManager.getLaunchIntentForPackage("com.hichip.campro")
+            val packageName = applicationContext.getSharedPreferences("_preferences" , Context.MODE_PRIVATE).getString("PACKAGE_NAME", "")
+
+            val launchIntent = packageManager.getLaunchIntentForPackage(packageName.toString())
             launchIntent?.let {
                 startActivity(it)
                 stopSelf()
             }
             if (launchIntent == null) {
                 Toast.makeText(
-                    applicationContext, "don't have com.hichip.campro package", Toast.LENGTH_SHORT
+                    applicationContext, "don't have $packageName package", Toast.LENGTH_SHORT
                 ).show()
             }
         }

@@ -1,6 +1,7 @@
 package com.example.vidrom
 
 import android.Manifest
+import android.R.attr
 import android.app.ActivityManager
 import android.app.AlertDialog
 import android.content.Context
@@ -15,9 +16,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.ui.AppBarConfiguration
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import com.example.vidrom.databinding.ActivityMainBinding
+import android.R.attr.password
+
+import android.content.SharedPreferences
+import androidx.core.widget.doOnTextChanged
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -93,6 +100,18 @@ class MainActivity : AppCompatActivity() {
     private fun setExitState() {
         hasPermission = true
         binding.button.text = "exit"
+        binding.textInput.visibility = View.VISIBLE
+        val preferences = getSharedPreferences( "_preferences" , Context.MODE_PRIVATE)
+        val packageName = preferences.getString("PACKAGE_NAME", "")
+        binding.editText.setText(packageName)
+
+        binding.editText.doOnTextChanged { text, start, before, count ->
+            val preferences = getSharedPreferences( "_preferences" , Context.MODE_PRIVATE)
+            val editor = preferences.edit()
+            editor.putString("PACKAGE_NAME", text.toString())
+            editor.commit()
+        }
+
         binding.text.text = "You have permission, you can exit from app"
     }
 
