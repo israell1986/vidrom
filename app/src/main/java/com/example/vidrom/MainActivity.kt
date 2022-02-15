@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity() {
             editor.commit()
         }
 
-        binding.text.text = "You have permission, you can exit from app"
+        binding.text.text = "You have permissions, you can exit."
     }
 
     override fun onRequestPermissionsResult(
@@ -136,20 +136,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
+        return false
     }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
 
     private fun isServiceRunning(): Boolean {
         val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager

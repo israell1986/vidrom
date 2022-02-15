@@ -18,9 +18,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.PRIORITY_MIN
 import de.hdodenhof.circleimageview.CircleImageView
 import android.view.Gravity
-
-
-
+import android.view.WindowManager
+import android.view.WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
 
 
 class FloatingWindow : Service() {
@@ -38,6 +37,8 @@ class FloatingWindow : Service() {
 
     override fun onCreate() {
         super.onCreate()
+
+
 
         val channelId =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -77,16 +78,15 @@ class FloatingWindow : Service() {
         }
 
         floatWindowLayoutParams = WindowManager.LayoutParams(
-//            (width * .4).toInt(),
-//            (height * .4).toInt(),
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
             LAYOUT_TYPE!!,
-            WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or FLAG_ALLOW_LOCK_WHILE_SCREEN_ON or
+                    WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED,
             PixelFormat.TRANSLUCENT
         )
 
-        floatWindowLayoutParams.gravity = Gravity.TOP or Gravity.LEFT
+        floatWindowLayoutParams.gravity = Gravity.BOTTOM or Gravity.LEFT
         floatWindowLayoutParams.x = 0
         floatWindowLayoutParams.y = 0
 
